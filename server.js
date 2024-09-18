@@ -44,25 +44,40 @@ app.get("/issue/:id", (req, res) => {
 
 // Update issue
 app.put("/issue/:id", (req, res) => {
-  const index = issues.findIndex((issue) => issue.id == req.params.id);
-  if (index !== -1) {
-    issues[index] = req.body;
-    issues[index].id = parseInt(req.params.id); // Ensure the ID is not changed
-    res.json({ message: "Issue updated successfully" });
-  } else {
-    res.status(404).json({ message: "Issue not found" });
+  const id = parseInt(req.params.id);
+  const { title, description } = req.body;
+
+  const issue = issues.find((issue) => issue.id === id);
+  if (!issue) {
+    return res.status(404).send("Issue not found");
   }
+
+  // Update the issue's title and description
+  issue.title = title || issue.title;
+  issue.description = description || issue.description;
+
+  res.send(issue); // Return the updated issue
 });
 
 // Delete issue
 app.delete("/issue/:id", (req, res) => {
-  const index = issues.findIndex((issue) => issue.id == req.params.id);
-  if (index !== -1) {
-    issues.splice(index, 1);
-    res.json({ message: "Issue deleted successfully" });
-  } else {
-    res.status(404).json({ message: "Issue not found" });
+  const id = parseInt(req.params.id);
+
+  // Find the issue by id
+  const issueIndex = issues.findIndex((issue) => issue.id === id);
+  if (issueIndex === -1) {
+    return res.status(404).json({ message: "Issue not found" });
   }
+
+  // Remove the issue from the array
+  const deletedIssue = issues.splice(issueIndex, 1);
+
+  console.log("Deleted issue:", deletedIssue);
+
+  return res.json({
+    message: "Issue deleted successfully",
+    issue: deletedIssue,
+  });
 });
 
 const port = 3000;

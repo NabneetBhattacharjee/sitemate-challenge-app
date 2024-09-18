@@ -19,9 +19,11 @@ function App() {
         "http://localhost:3000/issue",
         newIssue
       );
-      console.log("Created Issue:", response.data);
+      console.log(response.data);
+      alert("Issue created successfully!");
     } catch (error) {
       console.error("Error creating issue:", error.response || error.message);
+      alert("Failed to create issue.");
     }
   };
 
@@ -34,8 +36,10 @@ function App() {
       }
       const response = await axios.get(`http://localhost:3000/issue/${id}`);
       setIssue(response.data);
+      alert("Issue fetched successfully!");
     } catch (error) {
       console.error("Error reading issue:", error.response || error.message);
+      alert("Failed to fetch issue.");
     }
   };
 
@@ -44,20 +48,28 @@ function App() {
     try {
       if (!id) {
         console.error("No ID provided");
+        alert("Please provide an Issue ID.");
         return;
       }
+
       const updatedIssue = {
-        id: id,
         title: title,
         description: description,
       };
+
+      console.log("Updated Issue to send:", updatedIssue);
+
       const response = await axios.put(
         `http://localhost:3000/issue/${id}`,
         updatedIssue
       );
-      console.log("Updated Issue:", response.data);
+
+      console.log("Update Response:", response.data);
+      alert("Issue updated successfully!");
+      setIssue(response.data);
     } catch (error) {
       console.error("Error updating issue:", error.response || error.message);
+      alert("Failed to update issue.");
     }
   };
 
@@ -70,8 +82,12 @@ function App() {
       }
       const response = await axios.delete(`http://localhost:3000/issue/${id}`);
       console.log("Deleted Issue:", response.data);
+      // Clear the issue from the state after deletion
+      setIssue({}); // Clear the issue from the state to clear the UI
+      alert("Issue deleted successfully!");
     } catch (error) {
       console.error("Error deleting issue:", error.response || error.message);
+      alert("Failed to delete issue.");
     }
   };
 
